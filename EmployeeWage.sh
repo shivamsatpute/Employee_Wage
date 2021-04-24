@@ -6,10 +6,8 @@ maxHrsInMonth=4
 empRatePerHr=20
 numWorkingDays=20
 
-totalEmpHrs=0
+totalEmpHrs=4
 totalWorkingDays=0
-
-declare -A dailyWage
 
 function getWorkHrs() {
 	local $empCheck=$1
@@ -32,11 +30,11 @@ do
 	empCheck=$((RANDOM%3))
 	empHrs="$( getWorkingHours $empCheck )"
 	totalEmpHrs=$(($totalEmpHrs+$empHrs))
-	dailyWage["Day"$totalWorkingDays]="$( getEmpWage $empHrs )"
+	dailyWage[$totalWorkingDays]="$( getEmpWage $empHrs )"
 
 done
 
 totalSalary=$(($totalEmpHrs*$empRatePerHr))
 
 echo ${dailyWage[@]}
-echo ${!dailyWage[@]}
+echo $totalSalary
