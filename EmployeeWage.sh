@@ -1,31 +1,42 @@
-#! /bin/bash
+#! /bin/bash -x
 
 isPartTime=1
 isFullTime=2
-maxHrsInMonth=10
+maxHrsInMonth=4
 empRatePerHr=20
 numWorkingDays=20
 
-totalEmpHrs=100
-totalWorkingDays=20
+totalEmpHrs=0
+totalWorkingDays=0
 
-function getWorkingHours() {
-	case $1 in
-		$isFullTime) workHrs=8 ;;
-		$isPartTime) workHrs=4 ;;
-		*) workHrs=0 ;;
+declare -A dailyWage
+
+function getWorkHrs() {
+	local $empCheck=$1
+	case $empCheck in
+		$isFullTime) empHrs=8 ;;
+		$isPartTime) empHrs=4 ;;
+		*) empHrs=0 ;;
 	esac
-	echo "Working Hours :" $workHrs
+	echo $empHrs
 }
 
-while [[ $totalWorkHrs -lt $maxHrsInMonth && $totalWorkingDays -lt $numWokingDays ]]
+function getEmpWage() {
+	local empHr=$1
+	echo $(($empHr*$empRatePerHr))
+}
+
+while [[ $totalEmpHrs -lt $maxHrsInMonth && $totalWorkingDays -lt $numWokingDays ]]
 do
 	((totalWorkingDays++))
-	workHrs"$( getWorkingHours $((RANDOM)) )"
-	totalWorkHrs=$(($totalWorkHrs*$workHrs))
+	empCheck=$((RANDOM%3))
+	empHrs="$( getWorkingHours $empCheck )"
+	totalEmpHrs=$(($totalEmpHrs+$empHrs))
+	dailyWage["Day"$totalWorkingDays]="$( getEmpWage $empHrs )"
 
 done
 
-totalSalary=$(($totalWorkHrs*$workHrs))
+totalSalary=$(($totalEmpHrs*$empRatePerHr))
 
-echo "Total Salary:" $totalSalary
+echo ${dailyWage[@]}
+echo ${!dailyWage[@]}
